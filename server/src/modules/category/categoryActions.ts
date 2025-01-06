@@ -1,5 +1,5 @@
 // Some data to make the trick
-
+import categoryRepository from "./categoryRepository";
 const categories = [
   {
     id: 1,
@@ -10,36 +10,21 @@ const categories = [
     name: "Science-Fiction",
   },
 ];
-
-import type { RequestHandler } from "express";
-
 // Declare the actions
-
-const browse: RequestHandler = (req, res) => {
-  if (req.query.q != null) {
-    const filteredPrograms = categories.filter((program) =>
-      program.name.includes(req.query.q as string),
-    );
-
-    res.json(filteredPrograms);
-  } else {
-    res.json(categories);
-  }
+/* Here you code */
+import type { RequestHandler } from "express";
+const browse: RequestHandler = async (req, res) => {
+  const categoriesFromDB = await categoryRepository.readAll();
+  res.json(categoriesFromDB);
 };
-
 const read: RequestHandler = (req, res) => {
   const parsedId = Number.parseInt(req.params.id);
-
   const category = categories.find((p) => p.id === parsedId);
-
   if (category != null) {
     res.json(category);
   } else {
     res.sendStatus(404);
   }
 };
-/* Here you code */
-
 // Export them to import them somewhere else
-
 export default { browse, read };
